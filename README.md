@@ -1,70 +1,52 @@
 # OCR Docs PFE
 
-Application complete de traitement de documents:
-- upload PDF/image,
-- extraction OCR,
-- structuration JSON,
-- enrichissement via Ollama (Llama),
-- stockage PostgreSQL,
-- interface web React.
+OCR Docs PFE is a full document processing app:
+- upload PDF or image files,
+- extract OCR text,
+- build structured JSON fields,
+- enrich output with Ollama (Llama),
+- store and browse documents in PostgreSQL.
 
-## 1. Stack technique
+## Project Stack
 
 - Backend: FastAPI + SQLAlchemy
-- Frontend: React (Vite)
-- Base de donnees: PostgreSQL
-- IA locale: Ollama (`llama3.1`)
-- OCR:
-  - local: RapidOCR / Tesseract
-  - distant: GLM OCR (API officielle ou endpoint custom)
-- Conteneurisation: Docker Compose
+- Frontend: React + Vite
+- Database: PostgreSQL
+- OCR engines: Local OCR (RapidOCR/Tesseract) or GLM OCR API
+- LLM: Ollama (`llama3.1`)
+- Runtime: Docker Compose
 
-## 2. Architecture
+## Repository Structure
 
-- `app/`
-  - API FastAPI, logique OCR, logique Llama, acces DB.
-- `frontend/`
-  - interface utilisateur React.
-- `docker-compose.yml`
-  - orchestration `postgres`, `ollama`, `backend`, `frontend`.
-- `uploads/` et `results/`
-  - fichiers runtime (non versionnes).
+- `app/`: FastAPI API, OCR services, Llama services, DB layer
+- `frontend/`: React client
+- `docker-compose.yml`: full local stack
+- `Dockerfile.backend`: backend image
+- `.env.example`: environment variable template
 
-## 3. Fonctionnalites principales
+## Main Features
 
-- Upload de documents (`.pdf`, `.jpg`, `.jpeg`, `.png`).
-- Extraction du texte OCR.
-- Parsing initial en JSON (champs facture: nom, prenom, date, montant, adresse, email, numero_facture).
-- Lecture des documents historiques en base.
-- Structuration avancee via Llama.
-- Fusion/sauvegarde des donnees structurees dans PostgreSQL.
+- Upload supported files: `.pdf`, `.jpg`, `.jpeg`, `.png`
+- OCR extraction from uploaded documents
+- Invoice-like field extraction to JSON
+- Document history view from database
+- Llama processing and JSON refinement
+- Save and merge structured data per document
 
-## 4. Prerequis
+## Quick Start (Docker)
 
-### Option A (recommandee): Docker
-
-- Docker Desktop + Docker Compose.
-
-### Option B: Execution locale
-
-- Python 3.11+
-- Node.js 20+
-- PostgreSQL
-- Ollama (si usage Llama local)
-- Tesseract (si OCR local sans Docker)
-
-## 5. Demarrage rapide avec Docker
+Run all services:
 
 ```bash
 docker compose up --build -d
 ```
 
-Services:
-- Frontend: `http://localhost:5180`
-- API (via proxy frontend): `http://localhost:5180/api`
-- Docs Swagger: `http://localhost:5180/api/docs`
+Access:
 
-Commandes utiles:
+- Frontend: `http://localhost:5180`
+- API docs (through proxy): `http://localhost:5180/api/docs`
+
+Useful commands:
 
 ```bash
 docker compose ps
@@ -72,16 +54,16 @@ docker compose logs -f
 docker compose down
 ```
 
-Forcer une reconstruction du frontend:
+Rebuild only frontend:
 
 ```bash
 docker compose build --no-cache frontend
 docker compose up -d --force-recreate frontend
 ```
 
-## 6. Execution locale (sans Docker)
+## Local Development (Without Docker)
 
-### 6.1 Backend
+### 1) Backend
 
 ```bash
 python -m venv venv
@@ -89,11 +71,12 @@ python -m venv venv
 .\venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API locale:
-- `http://127.0.0.1:8000`
-- Docs: `http://127.0.0.1:8000/docs`
+Local API:
 
-### 6.2 Frontend
+- `http://127.0.0.1:8000`
+- `http://127.0.0.1:8000/docs`
+
+### 2) Frontend
 
 ```bash
 cd frontend
@@ -101,136 +84,131 @@ npm install
 npm run dev
 ```
 
-Par defaut, le frontend vise `http://127.0.0.1:8000`.
+Default frontend API target is `http://127.0.0.1:8000`.
 
-Pour surcharger:
+Optional override:
 
 ```dotenv
 # frontend/.env
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-## 7. Configuration (.env)
+## Environment Variables
 
-Copier `.env.example` vers `.env`, puis adapter.
+Copy `.env.example` to `.env`, then adapt values for your setup.
 
-Variables importantes:
+Important variables:
 
 - `DATABASE_URL`
-  - ex local: `postgresql+psycopg://ocr_user:ocr_password@localhost:55432/ocr_db`
 - `FASTAPI_ROOT_PATH`
-  - en Docker: `/api` (utilise par le reverse proxy)
 - `OLLAMA_BASE_URL`
-  - local: `http://127.0.0.1:11434`
 - `OLLAMA_MODEL`
-  - ex: `llama3.1`
 - `GLM_OCR_PROVIDER`
-  - `local`, `official`, `auto`
 - `GLM_OCR_USE_LOCAL`
-  - `1` pour forcer OCR local
 - `GLM_OCR_API_KEY`
-  - requis pour OCR officiel
 - `GLM_OCR_API_URL`
-  - endpoint OCR custom (mode multipart)
 - `OCR_LANGS`
-  - langues Tesseract (ex: `fra+eng`)
 
-## 8. Modes OCR
+## OCR Modes
 
-Le backend choisit le mode OCR selon la configuration:
+OCR mode is selected from environment configuration:
 
-1. `GLM_OCR_USE_LOCAL=1` -> OCR local force.
-2. `GLM_OCR_PROVIDER=local` -> OCR local.
-3. `GLM_OCR_PROVIDER=official` + `GLM_OCR_API_KEY` -> API officielle GLM.
-4. `GLM_OCR_API_URL` renseigne -> endpoint OCR custom.
-5. `GLM_OCR_MOCK=1` -> sortie mock pour dev.
+1. `GLM_OCR_USE_LOCAL=1` forces local OCR.
+2. `GLM_OCR_PROVIDER=local` uses local OCR.
+3. `GLM_OCR_PROVIDER=official` with `GLM_OCR_API_KEY` uses official GLM OCR.
+4. `GLM_OCR_API_URL` uses custom OCR endpoint (multipart mode).
+5. `GLM_OCR_MOCK=1` returns mock OCR output for local testing.
 
-Si rien n'est configure correctement, l'API renvoie une erreur explicite.
-
-## 9. Endpoints API
+## API Endpoints
 
 ### `GET /`
 
-Healthcheck.
+Health endpoint.
 
 ### `POST /upload`
 
-Upload + OCR + structuration initiale + sauvegarde DB.
-
-Retour: document complet (`id`, `file_name`, `data`, `raw_text`, `llama_output`, `date_uploaded`).
+Upload + OCR + initial JSON extraction + DB save.
 
 ### `POST /ocr`
 
-OCR local uniquement (retour brut `{"text": ...}`), sans sauvegarde DB.
+Run local OCR only, returns `{ "text": "..." }`.
 
 ### `GET /documents`
 
-Liste des documents, tries par date desc.
+List all stored documents, newest first.
 
 ### `POST /generate_with_llama`
 
-Generation Llama simple depuis un texte OCR.
+Generate Llama output from OCR text.
 
 ### `POST /process_with_llama`
 
-Generation Llama + tentative de JSON structure.
+Generate Llama output and try to return structured JSON.
 
-Payload:
-- `text` (obligatoire)
-- `instruction` (optionnelle)
-- `document_id` (optionnel)
-- `sync_data` (bool, default `false`)
+Payload fields:
 
-Si `document_id` + `sync_data=true`, l'output Llama est sauve en base et les donnees peuvent etre fusionnees.
+- `text` (required)
+- `instruction` (optional)
+- `document_id` (optional)
+- `sync_data` (optional, default `false`)
 
 ### `PUT /documents/{document_id}/data`
 
-Sauvegarde JSON structure pour un document.
+Save structured JSON for one document.
 
-Payload:
-- `data` (objet JSON)
-- `merge` (bool, default `true`)
+Payload fields:
 
-## 10. Exemples cURL
+- `data` (required JSON object)
+- `merge` (optional, default `true`)
 
-Upload:
+## cURL Examples
+
+Upload file:
 
 ```bash
-curl -F "file=@C:\path\to\facture.png" http://127.0.0.1:8000/upload
+curl -F "file=@C:\path\to\invoice.png" http://127.0.0.1:8000/upload
 ```
 
-Process Llama:
+Process with Llama:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/process_with_llama ^
   -H "Content-Type: application/json" ^
-  -d "{\"text\":\"...\",\"instruction\":\"Structure en JSON\",\"document_id\":1,\"sync_data\":true}"
+  -d "{\"text\":\"...\",\"instruction\":\"Extract invoice number and total\",\"document_id\":1,\"sync_data\":true}"
 ```
 
-## 11. Schema de donnees (table `documents`)
+## Database Model
 
-- `id` (int, PK)
+Table: `documents`
+
+- `id` (integer, primary key)
 - `file_name` (string)
 - `data` (JSONB)
 - `raw_text` (text, nullable)
 - `llama_output` (text, nullable)
 - `date_uploaded` (timestamp)
 
-## 12. Troubleshooting
+## Troubleshooting
 
-- Frontend affiche une ancienne version:
-  - reconstruire/recreer le service frontend (voir section Docker).
-  - forcer refresh navigateur (`Ctrl + F5`).
-- Erreur Ollama:
-  - verifier que le service Ollama tourne.
-  - verifier que le modele existe (`ollama pull llama3.1`).
-- Erreur OCR local:
-  - verifier l'installation de Tesseract/RapidOCR.
-  - verifier `OCR_LANGS` (ex `fra+eng`).
-- Erreur CORS en local:
-  - verifier `CORS_ALLOW_ORIGINS` cote backend.
+- Frontend still shows old UI:
+  - rebuild/recreate frontend container,
+  - hard refresh browser (`Ctrl + F5`).
+- Ollama errors:
+  - check Ollama service is running,
+  - check model is present (`ollama pull llama3.1`).
+- Local OCR errors:
+  - verify Tesseract or RapidOCR installation,
+  - verify `OCR_LANGS` value.
+- CORS issues:
+  - verify backend `CORS_ALLOW_ORIGINS`.
 
-## 13. Notes importantes
+## Git Notes
 
-- Les fichiers volumineux de modeles (`models/`) ne sont pas versionnes.
-- `.env`, `venv`, `uploads`, `frontend/dist`, `frontend/node_modules` sont ignores par Git.
+Ignored by git:
+
+- `.env`
+- `venv/`
+- `uploads/`
+- `models/`
+- `frontend/node_modules/`
+- `frontend/dist/`
