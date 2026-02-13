@@ -1,0 +1,93 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ocr_user
+      POSTGRES_PASSWORD: ocr_password
+      POSTGRES_DB: ocr_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ocr_user -d ocr_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_MODEL: llama3.1
+    entrypoint: ["/bin/sh", "-lc"]
+    command:
+      - "export OLLAMA_HOST=http://ollama:11434 && ollama pull ${OLLAMA_MODEL:-llama3.1}"
+    restart: "no"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://ocr_user:ocr_password@postgres:5432/ocr_db
+      OLLAMA_BASE_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3.1
+      FASTAPI_ROOT_PATH: "${FASTAPI_ROOT_PATH:-/api}"
+      GLM_OCR_API_URL: ${GLM_OCR_API_URL:-}
+      GLM_OCR_API_KEY: ${GLM_OCR_API_KEY:-}
+      GLM_OCR_PROVIDER: "${GLM_OCR_PROVIDER:-auto}"
+      GLM_OCR_MODEL: "${GLM_OCR_MODEL:-glm-ocr}"
+      GLM_OCR_LAYOUT_PARSING_URL: "${GLM_OCR_LAYOUT_PARSING_URL:-https://api.z.ai/api/paas/v4/layout_parsing}"
+      GLM_OCR_PROMPT: "${GLM_OCR_PROMPT:-Extract all readable text from this document and return plain text only.}"
+      GLM_OCR_FILE_FIELD: ${GLM_OCR_FILE_FIELD:-file}
+      GLM_OCR_RESPONSE_TEXT_KEY: ${GLM_OCR_RESPONSE_TEXT_KEY:-text}
+      GLM_OCR_TIMEOUT_SECONDS: ${GLM_OCR_TIMEOUT_SECONDS:-90}
+      GLM_OCR_USE_LOCAL: ${GLM_OCR_USE_LOCAL:-0}
+      GLM_OCR_MOCK: ${GLM_OCR_MOCK:-0}
+      CORS_ALLOW_ORIGINS: http://localhost:5180,http://127.0.0.1:5180,http://localhost:5174,http://127.0.0.1:5174,http://localhost:5173,http://127.0.0.1:5173
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama-init:
+        condition: service_completed_successfully
+    volumes:
+      - uploads_data:/app/uploads
+      - results_data:/app/results
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-5180}:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  ollama_data:
+  uploads_data:
+  results_data:

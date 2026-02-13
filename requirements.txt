@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+sqlalchemy
+psycopg[binary]
+requests
+pillow
+pymupdf
+numpy
+rapidocr-onnxruntime
+pytesseract
