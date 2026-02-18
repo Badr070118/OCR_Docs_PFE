@@ -18,6 +18,7 @@ from app.db import (
     update_document_data,
     update_llama_output,
 )
+from app.invoice_ocr import invoice_ocr
 from app.llama_service import (
     extract_hybrid_data_from_text,
     generate_from_llama,
@@ -29,7 +30,8 @@ from app.ocr import (
     extract_text_with_local_ocr,
     format_extracted_text_as_json,
 )
-from app.schemas import DocumentOut
+from app.qa_service import ask_document_question
+from app.schemas import DocumentAskRequest, DocumentAskResponse, DocumentOut
 
 FASTAPI_ROOT_PATH = (os.getenv("FASTAPI_ROOT_PATH") or "").strip()
 
@@ -145,9 +147,50 @@ async def run_local_ocr(file: UploadFile = File(...)) -> dict:
     return {"text": text}
 
 
+@app.post("/ocr/invoice-table", tags=["ocr"])
+async def run_invoice_table_ocr(file: UploadFile = File(...)) -> dict:
+    if not _is_allowed_upload(file):
+        raise HTTPException(status_code=400, detail="Unsupported file type.")
+
+    original_name = Path(file.filename or "upload").name
+    extension = Path(original_name).suffix.lower()
+    safe_name = f"{uuid4().hex}{extension}"
+    destination = UPLOADS_DIR / safe_name
+
+    with destination.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    try:
+        result = invoice_ocr(str(destination))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    return result
+
+
 @app.get("/documents", response_model=list[DocumentOut], tags=["documents"])
 def list_documents(db: Session = Depends(get_db)) -> list[Document]:
     return db.query(Document).order_by(Document.date_uploaded.desc()).all()
+
+
+@app.post(
+    "/documents/{document_id}/ask",
+    response_model=DocumentAskResponse,
+    tags=["documents"],
+)
+def ask_document(
+    document_id: int,
+    payload: DocumentAskRequest,
+    db: Session = Depends(get_db),
+) -> DocumentAskResponse:
+    try:
+        return ask_document_question(db, document_id, payload.question)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 @app.post("/generate_with_llama", tags=["llama"])

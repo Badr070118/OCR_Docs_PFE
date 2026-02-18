@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchDocuments, processWithLlama, saveDocumentData } from "../services/api";
+import DocumentChat from "./DocumentChat";
 
 export default function DocumentsList({ refreshKey }) {
   const [documents, setDocuments] = useState([]);
@@ -161,6 +162,16 @@ export default function DocumentsList({ refreshKey }) {
       );
     }
 
+    if (activeView === "chat") {
+      return (
+        <DocumentChat
+          docId={selectedDoc.id}
+          structuredJson={pendingStructured || selectedDoc.data || {}}
+          ocrText={selectedDoc.raw_text || ""}
+        />
+      );
+    }
+
     const jsonPayload = pendingStructured || selectedDoc.data || {};
     return (
       <>
@@ -269,6 +280,13 @@ export default function DocumentsList({ refreshKey }) {
                 onClick={() => setActiveView("json")}
               >
                 Extracted JSON
+              </button>
+              <button
+                type="button"
+                className={`tab ${activeView === "chat" ? "active" : ""}`}
+                onClick={() => setActiveView("chat")}
+              >
+                Chat sur le document
               </button>
             </div>
 

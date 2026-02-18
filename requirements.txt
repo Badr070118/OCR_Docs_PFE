@@ -7,5 +7,6 @@ requests
 pillow
 pymupdf
 numpy
+opencv-python-headless
 rapidocr-onnxruntime
 pytesseract

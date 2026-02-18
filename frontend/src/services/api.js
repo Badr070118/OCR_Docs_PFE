@@ -37,7 +37,7 @@ export async function processWithLlama({
       sync_data: Boolean(syncData),
     },
     {
-      timeout: 120000,
+      timeout: 300000,
     }
   );
   return response.data;
@@ -53,6 +53,15 @@ export async function saveDocumentData({ documentId, data, merge = true }) {
     {
       timeout: 120000,
     }
+  );
+  return response.data;
+}
+
+export async function askDocumentQuestion({ documentId, question }) {
+  const response = await api.post(
+    `/documents/${documentId}/ask`,
+    { question },
+    { timeout: 180000 }
   );
   return response.data;
 }

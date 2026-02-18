@@ -12,7 +12,7 @@ npm install
 npm run dev
 ```
 
-The app runs on `http://localhost:5173` by default.
+The app runs on `http://localhost:5180` by default.
 
 ## Configure API base URL
 By default the frontend calls `http://127.0.0.1:8000`.
@@ -28,7 +28,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5180"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
