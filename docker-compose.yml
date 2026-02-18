@@ -43,8 +43,20 @@ services:
       dockerfile: Dockerfile.backend
     environment:
       DATABASE_URL: postgresql+psycopg://ocr_user:ocr_password@postgres:5432/ocr_db
-      OLLAMA_BASE_URL: http://ollama:11434
-      OLLAMA_MODEL: llama3.1
+      LLAMA_CPP_URL: ${LLAMA_CPP_URL:-http://host.docker.internal:8081/completion}
+      LLAMA_CPP_MODEL: ${LLAMA_CPP_MODEL:-local-model}
+      LLAMA_TEMPERATURE: ${LLAMA_TEMPERATURE:-0.1}
+      LLAMA_MAX_TOKENS: ${LLAMA_MAX_TOKENS:-800}
+      LLAMA_TOP_P: ${LLAMA_TOP_P:-0.9}
+      LLAMA_HTTP_TIMEOUT_SECONDS: ${LLAMA_HTTP_TIMEOUT_SECONDS:-120}
+      LLAMA_HTTP_RETRIES: ${LLAMA_HTTP_RETRIES:-1}
+      LLAMA_HTTP_RETRY_BACKOFF_SECONDS: ${LLAMA_HTTP_RETRY_BACKOFF_SECONDS:-0.75}
+      LLAMA_STOP_SEQUENCES: "${LLAMA_STOP_SEQUENCES:-```|</json>|<|eot_id|>}"
+      LLAMA_DEBUG: ${LLAMA_DEBUG:-0}
+      LLM_FALLBACK_OLLAMA: ${LLM_FALLBACK_OLLAMA:-1}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.1}
+      OLLAMA_TIMEOUT_SECONDS: ${OLLAMA_TIMEOUT_SECONDS:-180}
       FASTAPI_ROOT_PATH: "${FASTAPI_ROOT_PATH:-/api}"
       GLM_OCR_API_URL: ${GLM_OCR_API_URL:-}
       GLM_OCR_API_KEY: ${GLM_OCR_API_KEY:-}
@@ -61,8 +73,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      ollama-init:
-        condition: service_completed_successfully
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - uploads_data:/app/uploads
       - results_data:/app/results

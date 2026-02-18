@@ -4,7 +4,7 @@ OCR Docs PFE is a full document processing app:
 - upload PDF or image files,
 - extract OCR text,
 - build structured JSON fields,
-- enrich output with Ollama (Llama),
+- enrich output with llama.cpp (Llama 3.1 GGUF),
 - store and browse documents in PostgreSQL.
 
 ## Project Stack
@@ -13,7 +13,7 @@ OCR Docs PFE is a full document processing app:
 - Frontend: React + Vite
 - Database: PostgreSQL
 - OCR engines: Local OCR (RapidOCR/Tesseract) or GLM OCR API
-- LLM: Ollama (`llama3.1`)
+- LLM: llama.cpp server (`/completion`)
 - Runtime: Docker Compose
 
 ## Repository Structure
@@ -101,13 +101,77 @@ Important variables:
 
 - `DATABASE_URL`
 - `FASTAPI_ROOT_PATH`
-- `OLLAMA_BASE_URL`
-- `OLLAMA_MODEL`
+- `LLAMA_CPP_URL`
+- `LLAMA_TEMPERATURE`
+- `LLAMA_MAX_TOKENS`
+- `LLAMA_TOP_P`
 - `GLM_OCR_PROVIDER`
 - `GLM_OCR_USE_LOCAL`
 - `GLM_OCR_API_KEY`
 - `GLM_OCR_API_URL`
 - `OCR_LANGS`
+
+## LLM (llama.cpp)
+
+### 1) Download a GGUF model
+
+Use a llama.cpp-compatible GGUF model for Llama 3.1 8B Instruct.  
+Recommended quantization: `Q4_K_M`.
+
+Example target path:
+
+```text
+models/llama-3.1-8b-instruct-q4_k_m.gguf
+```
+
+### 2) Start llama.cpp server
+
+Windows:
+
+```bat
+set MODEL_PATH=models\llama-3.1-8b-instruct-q4_k_m.gguf
+set NGL=35
+set CTX=4096
+set HOST=127.0.0.1
+set PORT=8081
+scripts\run_llama_cpp_server.bat
+```
+
+Linux:
+
+```bash
+MODEL_PATH=models/llama-3.1-8b-instruct-q4_k_m.gguf \
+NGL=35 \
+CTX=4096 \
+HOST=127.0.0.1 \
+PORT=8081 \
+bash scripts/run_llama_cpp_server.sh
+```
+
+### 3) Configure backend
+
+Set `.env` values (see `.env.example`):
+
+```dotenv
+LLAMA_CPP_URL=http://127.0.0.1:8081/completion
+LLAMA_CPP_MODEL=local-model
+LLAMA_TEMPERATURE=0.1
+LLAMA_MAX_TOKENS=800
+LLAMA_TOP_P=0.9
+LLM_FALLBACK_OLLAMA=1
+OLLAMA_BASE_URL=http://ollama:11434
+OLLAMA_MODEL=llama3.1
+```
+
+If port `8081` is already used, pick another one (example `8082`) for both server and `LLAMA_CPP_URL`.
+
+### 4) Test llama.cpp endpoint quickly
+
+```bash
+curl -X POST http://127.0.0.1:8081/completion ^
+  -H "Content-Type: application/json" ^
+  -d "{\"prompt\":\"Return JSON: {\\\"ok\\\":true}\",\"n_predict\":64,\"temperature\":0.1,\"top_p\":0.9,\"stream\":false}"
+```
 
 ## OCR Modes
 
@@ -193,9 +257,10 @@ Table: `documents`
 - Frontend still shows old UI:
   - rebuild/recreate frontend container,
   - hard refresh browser (`Ctrl + F5`).
-- Ollama errors:
-  - check Ollama service is running,
-  - check model is present (`ollama pull llama3.1`).
+- llama.cpp errors:
+  - check llama.cpp server is running on `LLAMA_CPP_URL`,
+  - check GGUF model path passed to `server`,
+  - increase `LLAMA_HTTP_TIMEOUT_SECONDS` for long prompts.
 - Local OCR errors:
   - verify Tesseract or RapidOCR installation,
   - verify `OCR_LANGS` value.

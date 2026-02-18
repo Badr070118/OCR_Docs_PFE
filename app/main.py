@@ -37,7 +37,7 @@ FASTAPI_ROOT_PATH = (os.getenv("FASTAPI_ROOT_PATH") or "").strip()
 
 app = FastAPI(
     title="GLM-OCR API",
-    description="FastAPI service for OCR extraction and Ollama Llama processing.",
+    description="FastAPI service for OCR extraction and llama.cpp Llama processing.",
     version="1.0.0",
     root_path=FASTAPI_ROOT_PATH,
 )
