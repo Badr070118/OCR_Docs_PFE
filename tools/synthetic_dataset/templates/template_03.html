@@ -1,0 +1,88 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { margin: 0; font-family: "Trebuchet MS", sans-serif; font-size: 12px; color: #202020; }
+    .sheet { display: grid; grid-template-columns: 34% 66%; min-height: 100vh; }
+    .sidebar { background: #f6efe8; padding: 18px; border-right: 2px solid #e8dacb; }
+    .main { padding: 18px; }
+    h1 { margin: 0 0 10px 0; font-size: 23px; letter-spacing: 0.08em; color: #b95d3d; }
+    .stamp { border: 2px dashed #d08a72; border-radius: 10px; padding: 8px; margin-bottom: 12px; font-size: 11px; }
+    .section { margin-bottom: 12px; }
+    .section h3 { margin: 0 0 6px 0; font-size: 12px; text-transform: uppercase; color: #7c4a35; }
+    .box { border: 1px solid #e1d3c8; border-radius: 8px; padding: 8px; background: #fffaf6; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    thead th { border-bottom: 2px solid #e2d0c3; text-align: left; padding: 8px 6px; font-size: 11px; }
+    tbody td { border-bottom: 1px solid #f0e7e0; padding: 7px 6px; }
+    .num { text-align: right; }
+    .summary { margin-top: 14px; border: 1px solid #e1d3c8; border-radius: 10px; overflow: hidden; }
+    .summary div { display: flex; justify-content: space-between; padding: 8px 10px; background: #fff; border-bottom: 1px solid #f0e7e0; }
+    .summary div:last-child { border-bottom: none; background: #fff0e6; font-weight: 700; }
+    .muted { color: #666; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <aside class="sidebar">
+      <h1>FACTURE</h1>
+      <div class="stamp">
+        <div>Numero: {{ invoice_number }}</div>
+        <div>Date: {{ invoice_date }}</div>
+        <div>Devise: {{ currency }}</div>
+      </div>
+
+      <div class="section">
+        <h3>Fournisseur</h3>
+        <div class="box">
+          <div>{{ supplier.name }}</div>
+          <div>{{ supplier.address }}</div>
+          <div>Tel: {{ supplier.phone }}</div>
+          <div>ICE: {{ supplier.ice }}</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Client</h3>
+        <div class="box">
+          <div>{{ client.name }}</div>
+          <div>{{ client.address }}</div>
+          <div>ICE: {{ client.ice }}</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="muted">Detail des lignes facture</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:54%;">Designation</th>
+            <th style="width:10%;" class="num">Qte</th>
+            <th style="width:18%;" class="num">Prix U.</th>
+            <th style="width:18%;" class="num">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.description }}</td>
+            <td class="num">{{ item.qty }}</td>
+            <td class="num">{{ item.unit_price }}</td>
+            <td class="num">{{ item.total }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="summary">
+        <div><span>Sous total HT</span><span>{{ subtotal }} {{ currency }}</span></div>
+        <div><span>TVA {{ tva_rate }}%</span><span>{{ tva_amount }} {{ currency }}</span></div>
+        <div><span>Total TTC</span><span>{{ total_ttc }} {{ currency }}</span></div>
+      </div>
+
+      <p class="muted">Commentaire: {{ note }}</p>
+    </main>
+  </div>
+</body>
+</html>

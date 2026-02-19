@@ -1,0 +1,84 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: Verdana, sans-serif; font-size: 12px; margin: 0; color: #1e1e1e; }
+    .page { padding: 0; }
+    .top { background: linear-gradient(120deg, #2f4858, #3d5a6c); color: #fff; padding: 18px 22px; }
+    .top h1 { margin: 0; font-size: 22px; letter-spacing: 0.08em; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px; font-size: 11px; }
+    .content { padding: 18px 22px; }
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .card { border: 1px solid #d7dee2; border-radius: 10px; padding: 10px; background: #fbfdff; }
+    .card .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #4b6a7f; margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #d7dee2; border-radius: 10px; overflow: hidden; }
+    th { background: #e8eff4; text-align: left; padding: 9px; font-size: 11px; }
+    td { border-top: 1px solid #edf2f5; padding: 8px 9px; }
+    .num { text-align: right; }
+    .totals { margin-top: 12px; margin-left: auto; width: 48%; }
+    .line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dotted #c8d4dd; }
+    .line strong { font-size: 14px; }
+    .footer { margin-top: 14px; font-size: 11px; color: #4f4f4f; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="top">
+      <h1>FACTURE CLIENT</h1>
+      <div class="meta-grid">
+        <div>Numero: {{ invoice_number }}</div>
+        <div>Date: {{ invoice_date }}</div>
+        <div>Devise: {{ currency }}</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="cards">
+        <div class="card">
+          <div class="label">Fournisseur</div>
+          <div>{{ supplier.name }}</div>
+          <div>{{ supplier.address }}</div>
+          <div>Tel: {{ supplier.phone }}</div>
+          <div>ICE: {{ supplier.ice }}</div>
+        </div>
+        <div class="card">
+          <div class="label">Client</div>
+          <div>{{ client.name }}</div>
+          <div>{{ client.address }}</div>
+          <div>ICE: {{ client.ice }}</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th class="num">Qte</th>
+            <th class="num">PU</th>
+            <th class="num">Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.description }}</td>
+            <td class="num">{{ item.qty }}</td>
+            <td class="num">{{ item.unit_price }}</td>
+            <td class="num">{{ item.total }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="totals">
+        <div class="line"><span>Sous total</span><span>{{ subtotal }} {{ currency }}</span></div>
+        <div class="line"><span>TVA {{ tva_rate }}%</span><span>{{ tva_amount }} {{ currency }}</span></div>
+        <div class="line"><strong>Total TTC</strong><strong>{{ total_ttc }} {{ currency }}</strong></div>
+      </div>
+
+      <div class="footer">Reference interne: {{ note }}</div>
+    </div>
+  </div>
+</body>
+</html>

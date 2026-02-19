@@ -1,0 +1,41 @@
+{
+  "invoice_number": "INV-2026-000002",
+  "date": "29/01/2026",
+  "supplier": {
+    "name": "Perez Renard et Fils",
+    "address": "9, boulevard Hernandez, 50125 Dupuynec",
+    "ice": "207111827018058",
+    "phone": "0554818144"
+  },
+  "client": {
+    "name": "Dubois Briand et Fils",
+    "address": "6, boulevard Timothée Chartier, 87741 Martinezboeuf",
+    "ice": "337595442122124"
+  },
+  "items": [
+    {
+      "description": "Maximize web-enabled vortals - Fait",
+      "qty": 17,
+      "unit_price": 128.24,
+      "total": 2180.08
+    },
+    {
+      "description": "Evolve one-to-one channels - Tout",
+      "qty": 17,
+      "unit_price": 1377.7,
+      "total": 23420.9
+    },
+    {
+      "description": "Integrate scalable portals - Calme",
+      "qty": 1,
+      "unit_price": 2360.95,
+      "total": 2360.95
+    }
+  ],
+  "subtotal": 27961.93,
+  "tva_rate": 20,
+  "tva_amount": 5592.39,
+  "total_ttc": 33554.32,
+  "currency": "MAD",
+  "template_id": 2
+}

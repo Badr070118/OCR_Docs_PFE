@@ -1,0 +1,59 @@
+{
+  "invoice_number": "INV-2025-000005",
+  "date": "22/10/2025",
+  "supplier": {
+    "name": "Mallet S.A.R.L.",
+    "address": "49, rue de Poirier, 47280 Besson",
+    "ice": "046003015867705",
+    "phone": "+33 (0)4 74 11 33 14"
+  },
+  "client": {
+    "name": "Briand",
+    "address": "980, boulevard de Alexandre, 13640 Maillotdan",
+    "ice": "068838492984410"
+  },
+  "items": [
+    {
+      "description": "Seize distributed experiences - Réfléchir",
+      "qty": 10,
+      "unit_price": 3366.46,
+      "total": 33664.6
+    },
+    {
+      "description": "Generate world-class relationships - Lire",
+      "qty": 11,
+      "unit_price": 4279.89,
+      "total": 47078.79
+    },
+    {
+      "description": "Grow end-to-end networks - Prendre",
+      "qty": 8,
+      "unit_price": 367.58,
+      "total": 2940.64
+    },
+    {
+      "description": "Unleash e-business bandwidth - Chez",
+      "qty": 9,
+      "unit_price": 437.6,
+      "total": 3938.4
+    },
+    {
+      "description": "Leverage granular relationships - Ensemble",
+      "qty": 8,
+      "unit_price": 900.94,
+      "total": 7207.52
+    },
+    {
+      "description": "Generate collaborative content - Intérieur",
+      "qty": 9,
+      "unit_price": 580.26,
+      "total": 5222.34
+    }
+  ],
+  "subtotal": 100052.29,
+  "tva_rate": 10,
+  "tva_amount": 10005.23,
+  "total_ttc": 110057.52,
+  "currency": "MAD",
+  "template_id": 1
+}

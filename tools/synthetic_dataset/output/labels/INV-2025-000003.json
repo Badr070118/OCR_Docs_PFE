@@ -1,0 +1,41 @@
+{
+  "invoice_number": "INV-2025-000003",
+  "date": "24/10/2025",
+  "supplier": {
+    "name": "Moreno Delmas SARL",
+    "address": "avenue Virginie Gonzalez, 06680 Sainte Margot",
+    "ice": "956818144306305",
+    "phone": "0320821375"
+  },
+  "client": {
+    "name": "Delaunay",
+    "address": "chemin Thierry Guérin, 41934 Bouvet-sur-Roy",
+    "ice": "695805935418912"
+  },
+  "items": [
+    {
+      "description": "Redefine enterprise content - Sonner",
+      "qty": 2,
+      "unit_price": 3773.02,
+      "total": 7546.04
+    },
+    {
+      "description": "Aggregate innovative models - Digne",
+      "qty": 9,
+      "unit_price": 386.0,
+      "total": 3474.0
+    },
+    {
+      "description": "Productize b2b markets - Anglais",
+      "qty": 17,
+      "unit_price": 1631.41,
+      "total": 27733.97
+    }
+  ],
+  "subtotal": 38754.01,
+  "tva_rate": 10,
+  "tva_amount": 3875.4,
+  "total_ttc": 42629.41,
+  "currency": "MAD",
+  "template_id": 3
+}

@@ -1,0 +1,71 @@
+{
+  "invoice_number": "INV-2025-000004",
+  "date": "09/11/2025",
+  "supplier": {
+    "name": "Lefebvre",
+    "address": "983, chemin de Legendre, 94229 Laine-sur-Poirier",
+    "ice": "137778195402395",
+    "phone": "0235034453"
+  },
+  "client": {
+    "name": "Royer SA",
+    "address": "73, rue Grégoire Allain, 30170 Julien-sur-Baron",
+    "ice": "077209065282137"
+  },
+  "items": [
+    {
+      "description": "Re-contextualize world-class networks - Taille",
+      "qty": 14,
+      "unit_price": 1797.95,
+      "total": 25171.3
+    },
+    {
+      "description": "Aggregate end-to-end info-mediaries - Doigt",
+      "qty": 3,
+      "unit_price": 1703.37,
+      "total": 5110.11
+    },
+    {
+      "description": "Leverage global niches - Empêcher",
+      "qty": 10,
+      "unit_price": 3977.33,
+      "total": 39773.3
+    },
+    {
+      "description": "Monetize ubiquitous channels - Comme",
+      "qty": 3,
+      "unit_price": 1461.98,
+      "total": 4385.94
+    },
+    {
+      "description": "Utilize front-end methodologies - Rang",
+      "qty": 19,
+      "unit_price": 3380.81,
+      "total": 64235.39
+    },
+    {
+      "description": "Facilitate end-to-end action-items - Placer",
+      "qty": 13,
+      "unit_price": 1400.91,
+      "total": 18211.83
+    },
+    {
+      "description": "Leverage seamless infrastructures - Bientôt",
+      "qty": 7,
+      "unit_price": 313.6,
+      "total": 2195.2
+    },
+    {
+      "description": "Innovate back-end e-commerce - Franc",
+      "qty": 6,
+      "unit_price": 4077.26,
+      "total": 24463.56
+    }
+  ],
+  "subtotal": 183546.63,
+  "tva_rate": 10,
+  "tva_amount": 18354.66,
+  "total_ttc": 201901.29,
+  "currency": "MAD",
+  "template_id": 1
+}

@@ -1,0 +1,81 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; color: #1b1b1b; margin: 0; }
+    .page { padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px; }
+    .title h1 { margin: 0; font-size: 24px; letter-spacing: 0.08em; }
+    .title .meta { margin-top: 6px; font-size: 11px; color: #555; }
+    .block { border: 1px solid #c9c9c9; border-radius: 8px; padding: 10px; width: 48%; }
+    .block h3 { margin: 0 0 8px 0; font-size: 13px; text-transform: uppercase; }
+    .parties { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { background: #f1f1f1; padding: 8px; text-align: left; font-size: 11px; }
+    tbody td { border-bottom: 1px solid #ececec; padding: 7px 8px; }
+    .num { text-align: right; }
+    .totals { width: 42%; margin-left: auto; margin-top: 14px; border: 1px solid #c9c9c9; border-radius: 8px; }
+    .totals div { display: flex; justify-content: space-between; padding: 7px 10px; border-bottom: 1px solid #ececec; }
+    .totals div:last-child { border-bottom: none; font-weight: 700; background: #f6f6f6; }
+    .note { margin-top: 14px; font-size: 11px; color: #444; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="title">
+        <h1>FACTURE</h1>
+        <div class="meta">Numero: {{ invoice_number }}</div>
+        <div class="meta">Date: {{ invoice_date }}</div>
+      </div>
+      <div class="meta">Devise: {{ currency }}</div>
+    </div>
+
+    <div class="parties">
+      <div class="block">
+        <h3>Fournisseur</h3>
+        <div>{{ supplier.name }}</div>
+        <div>{{ supplier.address }}</div>
+        <div>Tel: {{ supplier.phone }}</div>
+        <div>ICE: {{ supplier.ice }}</div>
+      </div>
+      <div class="block">
+        <h3>Client</h3>
+        <div>{{ client.name }}</div>
+        <div>{{ client.address }}</div>
+        <div>ICE: {{ client.ice }}</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:58%;">Description</th>
+          <th style="width:10%;" class="num">Qte</th>
+          <th style="width:16%;" class="num">Prix Unitaire</th>
+          <th style="width:16%;" class="num">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td class="num">{{ item.qty }}</td>
+          <td class="num">{{ item.unit_price }}</td>
+          <td class="num">{{ item.total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div><span>Sous total</span><span>{{ subtotal }} {{ currency }}</span></div>
+      <div><span>TVA ({{ tva_rate }}%)</span><span>{{ tva_amount }} {{ currency }}</span></div>
+      <div><span>Total TTC</span><span>{{ total_ttc }} {{ currency }}</span></div>
+    </div>
+
+    <div class="note">Note: {{ note }}</div>
+  </div>
+</body>
+</html>

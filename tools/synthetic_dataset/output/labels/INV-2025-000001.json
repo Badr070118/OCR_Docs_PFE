@@ -1,0 +1,77 @@
+{
+  "invoice_number": "INV-2025-000001",
+  "date": "29/11/2025",
+  "supplier": {
+    "name": "Imbert",
+    "address": "49, chemin Vallée, 21104 Bouchet-sur-Ferreira",
+    "ice": "693147209617519",
+    "phone": "04 73 19 42 97"
+  },
+  "client": {
+    "name": "Pinto S.A.R.L.",
+    "address": "97, rue Ollivier, 18529 Chevalier-sur-Dufour",
+    "ice": "429707643781172"
+  },
+  "items": [
+    {
+      "description": "Synergize e-business applications - Planche",
+      "qty": 19,
+      "unit_price": 381.13,
+      "total": 7241.47
+    },
+    {
+      "description": "Disintermediate leading-edge web services - Difficile",
+      "qty": 13,
+      "unit_price": 3226.07,
+      "total": 41938.91
+    },
+    {
+      "description": "Re-intermediate customized e-business - Désirer",
+      "qty": 3,
+      "unit_price": 2643.03,
+      "total": 7929.09
+    },
+    {
+      "description": "Re-contextualize robust mindshare - Nature",
+      "qty": 12,
+      "unit_price": 279.67,
+      "total": 3356.04
+    },
+    {
+      "description": "Strategize end-to-end info-mediaries - Phrase",
+      "qty": 6,
+      "unit_price": 2818.23,
+      "total": 16909.38
+    },
+    {
+      "description": "Strategize frictionless eyeballs - Accrocher",
+      "qty": 15,
+      "unit_price": 2768.1,
+      "total": 41521.5
+    },
+    {
+      "description": "Synthesize innovative initiatives - Ce",
+      "qty": 6,
+      "unit_price": 4183.18,
+      "total": 25099.08
+    },
+    {
+      "description": "Mesh frictionless systems - Aussi",
+      "qty": 2,
+      "unit_price": 2277.13,
+      "total": 4554.26
+    },
+    {
+      "description": "Matrix sticky deliverables - An",
+      "qty": 13,
+      "unit_price": 587.26,
+      "total": 7634.38
+    }
+  ],
+  "subtotal": 156184.11,
+  "tva_rate": 20,
+  "tva_amount": 31236.82,
+  "total_ttc": 187420.93,
+  "currency": "MAD",
+  "template_id": 2
+}
