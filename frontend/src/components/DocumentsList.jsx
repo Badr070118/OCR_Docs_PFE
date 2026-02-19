@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchDocuments, processWithLlama, saveDocumentData } from "../services/api";
 import DocumentChat from "./DocumentChat";
 
-export default function DocumentsList({ refreshKey }) {
+export default function DocumentsList({ refreshKey, onOpenReview }) {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -198,17 +198,27 @@ export default function DocumentsList({ refreshKey }) {
           <aside className="docs-sidebar">
             {documents.length === 0 && <p className="empty">No documents yet.</p>}
             {documents.map((doc) => (
-              <button
-                key={doc.id}
-                type="button"
-                className={`doc-item ${selectedId === doc.id ? "active" : ""}`}
-                onClick={() => setSelectedId(doc.id)}
-              >
-                <strong>
-                  #{doc.id} {doc.file_name}
-                </strong>
-                <span>{new Date(doc.date_uploaded).toLocaleString()}</span>
-              </button>
+              <div key={doc.id} style={{ display: "grid", gap: "6px" }}>
+                <button
+                  type="button"
+                  className={`doc-item ${selectedId === doc.id ? "active" : ""}`}
+                  onClick={() => setSelectedId(doc.id)}
+                >
+                  <strong>
+                    #{doc.id} {doc.file_name}
+                  </strong>
+                  <span>{new Date(doc.date_uploaded).toLocaleString()}</span>
+                </button>
+                {onOpenReview && (
+                  <button
+                    type="button"
+                    className="tab"
+                    onClick={() => onOpenReview(doc.id)}
+                  >
+                    Review
+                  </button>
+                )}
+              </div>
             ))}
           </aside>
 
@@ -221,6 +231,16 @@ export default function DocumentsList({ refreshKey }) {
               </h3>
               {selectedDoc && (
                 <p>Uploaded: {new Date(selectedDoc.date_uploaded).toLocaleString()}</p>
+              )}
+              {selectedDoc && onOpenReview && (
+                <button
+                  type="button"
+                  className="tab"
+                  onClick={() => onOpenReview(selectedDoc.id)}
+                  style={{ marginTop: "8px" }}
+                >
+                  Ouvrir Review
+                </button>
               )}
             </div>
 

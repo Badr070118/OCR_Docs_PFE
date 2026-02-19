@@ -31,6 +31,7 @@ from app.ocr import (
     format_extracted_text_as_json,
 )
 from app.qa_service import ask_document_question
+from app.review.router import review_router
 from app.schemas import DocumentAskRequest, DocumentAskResponse, DocumentOut
 
 FASTAPI_ROOT_PATH = (os.getenv("FASTAPI_ROOT_PATH") or "").strip()
@@ -55,6 +56,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(review_router)
 
 UPLOADS_DIR = Path("uploads")
 RESULTS_DIR = Path("results")

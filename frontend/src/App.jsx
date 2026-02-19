@@ -3,8 +3,12 @@ import UploadForm from "./components/UploadForm";
 import DocumentsList from "./components/DocumentsList";
 import OcrResult from "./components/OcrResult";
 import { uploadDocument } from "./services/api";
+import ReviewPage from "./review/ReviewPage";
+import { navigateTo, useAppRoute } from "./review/routing";
 
 export default function App() {
+  const route = useAppRoute();
+  const reviewEnabled = import.meta.env.VITE_REVIEW_FEATURE_ENABLED !== "0";
   const [uploadResult, setUploadResult] = useState(null);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -27,6 +31,27 @@ export default function App() {
     }
   };
 
+  if (route.type === "review") {
+    if (!reviewEnabled) {
+      return (
+        <div className="app">
+          <section className="panel">
+            <p className="state error">Review feature is disabled.</p>
+            <button type="button" className="btn primary" onClick={() => navigateTo("/")}>
+              Retour a la liste
+            </button>
+          </section>
+        </div>
+      );
+    }
+
+    return (
+      <div className="app">
+        <ReviewPage documentId={route.documentId} onBack={() => navigateTo("/")} />
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="hero">
@@ -45,7 +70,14 @@ export default function App() {
 
         <OcrResult text={uploadResult?.raw_text || ""} loading={uploadLoading} />
 
-        <DocumentsList refreshKey={refreshKey} />
+        <DocumentsList
+          refreshKey={refreshKey}
+          onOpenReview={
+            reviewEnabled
+              ? (documentId) => navigateTo(`/documents/${documentId}/review`)
+              : null
+          }
+        />
       </main>
     </div>
   );
